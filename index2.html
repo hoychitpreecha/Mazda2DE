@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Mazda2 Stat">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%232563eb%22/><text y=%22.9em%22 font-size=%2280%22>🚘</text></svg>">
+    <title>Mazda 2 Fuel Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f3f4f6; -webkit-tap-highlight-color: transparent; }
+        .safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 20px); }
+    </style>
+</head>
+<body class="p-4 md:p-8 safe-area-pb">
+
+    <div class="max-w-6xl mx-auto mt-4">
+        <div class="mb-6 text-center">
+            <h1 class="text-2xl font-bold text-gray-800">📊 สถิติ Mazda 2 (DE)</h1>
+            <p class="text-sm text-gray-500 mt-1" id="totalMileageText">อัปเดตข้อมูลล่าสุด</p>
+        </div>
+
+        <!-- ฟอร์มบันทึกข้อมูลประจำวัน -->
+        <div class="bg-white p-4 rounded-xl shadow-sm mb-6 border-2 border-blue-100">
+            <h3 class="text-sm font-semibold text-blue-600 mb-3">📝 บันทึกข้อมูลการเดินทางวันนี้</h3>
+            <form id="dailyForm" class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">วันที่</label>
+                        <input type="date" id="dateInput" required class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">ระยะทาง (กม.)</label>
+                        <input type="number" id="distanceInput" step="0.1" inputmode="decimal" required placeholder="เช่น 42.5" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">ค่าน้ำมันรวม (บาท)</label>
+                        <input type="number" id="costInput" step="1" inputmode="numeric" required value="0" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">ราคา E20 (บาท/ลิตร)</label>
+                        <input type="number" id="pricePerLiterInput" step="0.01" inputmode="decimal" required value="34.94" class="w-full bg-blue-50 border border-blue-200 text-blue-700 font-semibold text-sm rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center transition mt-2">
+                    + บันทึกข้อมูล
+                </button>
+            </form>
+        </div>
+
+        <!-- 1. สรุปเฉพาะเดือนปัจจุบัน -->
+        <h3 class="text-sm font-semibold text-gray-700 mb-2 mt-2">📅 สรุปเดือนปัจจุบัน (<span id="currentMonthLabel"></span>)</h3>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-blue-50 p-4 rounded-xl shadow-sm border-l-4 border-blue-400">
+                <p class="text-xs text-blue-600 mb-1">ระยะทาง (กม.)</p>
+                <h2 id="monthDistance" class="text-xl font-bold text-gray-800">0</h2>
+            </div>
+            <div class="bg-red-50 p-4 rounded-xl shadow-sm border-l-4 border-red-400">
+                <p class="text-xs text-red-600 mb-1">ค่าน้ำมัน (บาท)</p>
+                <h2 id="monthCost" class="text-xl font-bold text-gray-800">0</h2>
+            </div>
+            <div class="bg-green-50 p-4 rounded-xl shadow-sm border-l-4 border-green-500 col-span-2 flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-green-700 mb-1">อัตราสิ้นเปลือง (บาท/กม.)</p>
+                    <h2 id="monthAvgRate" class="text-xl font-bold text-gray-800">0.00</h2>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-green-700 mb-1">ความประหยัด (กม./ลิตร)</p>
+                    <h2 id="monthAvgKmL" class="text-xl font-bold text-green-600">0.00</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. สรุปรวมทั้งหมด (กรอบเดิม) -->
+        <h3 class="text-sm font-semibold text-gray-700 mb-2">📊 สรุปรวมสะสมทั้งหมด</h3>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-gray-300">
+                <p class="text-xs text-gray-500 mb-1">ระยะทางรวม (กม.)</p>
+                <h2 id="sumDistance" class="text-xl font-bold text-gray-800">0</h2>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-gray-300">
+                <p class="text-xs text-gray-500 mb-1">ค่าน้ำมันรวม (บาท)</p>
+                <h2 id="sumCost" class="text-xl font-bold text-gray-800">0</h2>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-gray-300 col-span-2 flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-gray-500 mb-1">สิ้นเปลืองเฉลี่ย (บาท/กม.)</p>
+                    <h2 id="avgRate" class="text-xl font-bold text-gray-800">0.00</h2>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-gray-500 mb-1">ประหยัดเฉลี่ย (กม./ลิตร)</p>
+                    <h2 id="avgKmL" class="text-xl font-bold text-gray-600">0.00</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- ตารางข้อมูลรายเดือน -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-sm font-semibold text-gray-700">ประวัติรายเดือนทั้งหมด</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs md:text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-600">
+                            <th class="p-3 border-b whitespace-nowrap">เดือน</th>
+                            <th class="p-3 border-b text-right">กม.</th>
+                            <th class="p-3 border-b text-right">บาท</th>
+                            <th class="p-3 border-b text-right whitespace-nowrap">กม./ลิตร</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="text-gray-700">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultE20Price = 35.00;
+        const baseData = [
+            { id: '2025-09', month: 'ก.ย. 68', distance: 2056.8, cost: 6060 },
+            { id: '2025-10', month: 'ต.ค. 68', distance: 1967.6, cost: 5050 },
+            { id: '2025-11', month: 'พ.ย. 68', distance: 2582.9, cost: 6850 },
+            { id: '2025-12', month: 'ธ.ค. 68', distance: 2463.8, cost: 5924 },
+            { id: '2026-01', month: 'ม.ค. 69', distance: 3863.3, cost: 7790 },
+            { id: '2026-02', month: 'ก.พ. 69', distance: 1851.8, cost: 4940 },
+            { id: '2026-03', month: 'มี.ค. 69', distance: 2367.3, cost: 7230 },
+            { id: '2026-04', month: 'เม.ย. 69', distance: 1580.4, cost: 5270 },
+            { id: '2026-05', month: 'พ.ค. 69', distance: 1421.6, cost: 6150 },
+            { id: '2026-06', month: 'มิ.ย. 69', distance: 1959.2, cost: 6565 },
+            { id: '2026-07', month: 'ก.ค. 69', distance: 2094.4, cost: 6290 },
+            { id: '2026-08', month: 'ส.ค. 69', distance: 2149.7, cost: 5940 }
+        ];
+
+        const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+        document.getElementById('dateInput').valueAsDate = new Date();
+        
+        const lastSavedPrice = localStorage.getItem('lastE20Price');
+        if(lastSavedPrice) {
+            document.getElementById('pricePerLiterInput').value = lastSavedPrice;
+        }
+
+        function loadAndRenderData() {
+            let savedData = JSON.parse(localStorage.getItem('mazdaDailyData')) || [];
+            let aggregated = {};
+
+            // ดึงข้อมูลเก่า
+            baseData.forEach(d => {
+                let liters = d.cost / defaultE20Price;
+                aggregated[d.id] = { month: d.month, distance: d.distance, cost: d.cost, liters: liters };
+            });
+
+            // ดึงข้อมูลที่เพิ่งกรอก
+            savedData.forEach(d => {
+                let dateObj = new Date(d.date);
+                let year = dateObj.getFullYear();
+                let month = dateObj.getMonth();
+                let id = `${year}-${String(month + 1).padStart(2, '0')}`;
+                let thaiYear = (year + 543).toString().slice(-2);
+                let monthStr = `${thaiMonths[month]} ${thaiYear}`;
+
+                if (!aggregated[id]) aggregated[id] = { month: monthStr, distance: 0, cost: 0, liters: 0 };
+                
+                let dist = parseFloat(d.distance || 0);
+                let cost = parseFloat(d.cost || 0);
+                let priceL = parseFloat(d.pricePerLiter || defaultE20Price);
+                let liters = cost > 0 ? (cost / priceL) : 0;
+
+                aggregated[id].distance += dist;
+                aggregated[id].cost += cost;
+                aggregated[id].liters += liters;
+            });
+
+            // เรียงลำดับจาก "ใหม่ไปเก่า" (Z -> A) ด้วย .sort((a, b) => b.localeCompare(a))
+            let finalData = Object.keys(aggregated)
+                .sort((a, b) => b.localeCompare(a))
+                .map(id => {
+                    let item = aggregated[id];
+                    item.id = id;
+                    item.rate = item.distance > 0 ? (item.cost / item.distance) : 0;
+                    item.kmPerLiter = item.liters > 0 ? (item.distance / item.liters) : (item.distance > 0 ? (item.distance/(item.cost/defaultE20Price)) : 0);
+                    return item;
+                });
+
+            updateUI(finalData);
+        }
+
+        function updateUI(data) {
+            let totalDist = 0;
+            let totalCost = 0;
+            let totalLiters = 0;
+
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            // สร้างตารางและรวมยอดทั้งหมด
+            data.forEach(d => {
+                totalDist += d.distance;
+                totalCost += d.cost;
+                totalLiters += d.liters;
+
+                const row = document.createElement('tr');
+                row.className = "border-b border-gray-50";
+                row.innerHTML = `
+                    <td class="p-3 whitespace-nowrap">${d.month}</td>
+                    <td class="p-3 text-right">${d.distance.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})}</td>
+                    <td class="p-3 text-right">${d.cost.toLocaleString()}</td>
+                    <td class="p-3 text-right font-semibold ${d.kmPerLiter < 10 ? 'text-red-500' : 'text-green-600'}">${d.kmPerLiter.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // --- อัปเดตข้อมูลเดือนปัจจุบัน ---
+            const now = new Date();
+            const currentId = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            const thaiYearLabel = (now.getFullYear() + 543).toString().slice(-2);
+            document.getElementById('currentMonthLabel').innerText = `${thaiMonths[now.getMonth()]} ${thaiYearLabel}`;
+
+            const currentMonthData = data.find(d => d.id === currentId) || { distance: 0, cost: 0, rate: 0, kmPerLiter: 0 };
+            
+            document.getElementById('monthDistance').innerText = currentMonthData.distance.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1});
+            document.getElementById('monthCost').innerText = currentMonthData.cost.toLocaleString();
+            document.getElementById('monthAvgRate').innerText = currentMonthData.rate.toFixed(2);
+            document.getElementById('monthAvgKmL').innerText = currentMonthData.kmPerLiter.toFixed(2);
+
+            // --- อัปเดตข้อมูลรวมทั้งหมด ---
+            document.getElementById('sumDistance').innerText = totalDist.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1});
+            document.getElementById('sumCost').innerText = totalCost.toLocaleString();
+            
+            let avgRate = totalDist > 0 ? (totalCost / totalDist) : 0;
+            let avgKmL = totalLiters > 0 ? (totalDist / totalLiters) : 0;
+            
+            document.getElementById('avgRate').innerText = avgRate.toFixed(2);
+            document.getElementById('avgKmL').innerText = avgKmL.toFixed(2);
+        }
+
+        document.getElementById('dailyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dateVal = document.getElementById('dateInput').value;
+            const distVal = document.getElementById('distanceInput').value;
+            const costVal = document.getElementById('costInput').value;
+            const priceVal = document.getElementById('pricePerLiterInput').value;
+
+            if(!dateVal || !distVal) return alert('กรุณากรอกวันที่และระยะทาง');
+
+            const newEntry = {
+                date: dateVal,
+                distance: parseFloat(distVal),
+                cost: parseFloat(costVal) || 0,
+                pricePerLiter: parseFloat(priceVal) || defaultE20Price
+            };
+
+            let savedData = JSON.parse(localStorage.getItem('mazdaDailyData')) || [];
+            savedData.push(newEntry);
+            localStorage.setItem('mazdaDailyData', JSON.stringify(savedData));
+            
+            localStorage.setItem('lastE20Price', priceVal);
+
+            document.getElementById('distanceInput').value = '';
+            document.getElementById('costInput').value = '0';
+            
+            alert('บันทึกข้อมูลสำเร็จ!');
+            loadAndRenderData();
+        });
+
+        loadAndRenderData();
+    </script>
+</body>
+</html>
