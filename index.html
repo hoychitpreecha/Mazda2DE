@@ -12,7 +12,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Prompt', sans-serif; background-color: #f3f4f6; -webkit-tap-highlight-color: transparent; }
-        /* เผื่อพื้นที่ให้เมนูด้านล่างสุดของจอ iPhone (Safe Area) */
         .pb-safe { padding-bottom: calc(70px + env(safe-area-inset-bottom, 20px)); }
         .nav-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
         .tab-btn.active { color: #2563eb; font-weight: 600; }
@@ -23,9 +22,9 @@
 </head>
 <body class="pb-safe">
 
-    <!-- Header (แสดงทุกหน้า) -->
-    <div class="bg-white shadow-sm p-4 sticky top-0 z-10">
-        <h1 class="text-xl font-bold text-gray-800 text-center">🚘 Mazda 2 (DE)</h1>
+    <!-- Header -->
+    <div class="bg-white shadow-sm p-4 sticky top-0 z-10 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-gray-800 mx-auto">🚘 Mazda 2 (DE)</h1>
     </div>
 
     <div class="max-w-6xl mx-auto p-4">
@@ -34,9 +33,7 @@
         <!-- TAB 1: การกรอกข้อมูล (หน้าหลัก) -->
         <!-- ========================================== -->
         <div id="tab1" class="tab-content block">
-            
-            <!-- สรุปเดือนปัจจุบัน -->
-            <h3 class="text-sm font-semibold text-gray-700 mb-2">📅 สรุปเดือนปัจจุบัน (<span id="currentMonthLabel"></span>)</h3>
+            <h3 class="text-sm font-semibold text-gray-700 mb-2 mt-2">📅 สรุปเดือนปัจจุบัน (<span id="currentMonthLabel"></span>)</h3>
             <div class="grid grid-cols-2 gap-3 mb-6">
                 <div class="bg-blue-50 p-4 rounded-xl shadow-sm border-l-4 border-blue-400">
                     <p class="text-xs text-blue-600 mb-1">ระยะทาง (กม.)</p>
@@ -58,7 +55,6 @@
                 </div>
             </div>
 
-            <!-- ฟอร์มกรอกข้อมูลการเดินทาง -->
             <div class="bg-white p-4 rounded-xl shadow-sm mb-6 border border-gray-100">
                 <h3 class="text-sm font-semibold text-blue-600 mb-3">📝 บันทึกการเดินทางวันนี้</h3>
                 <form id="dailyForm" class="space-y-3">
@@ -88,9 +84,8 @@
                 </form>
             </div>
 
-            <!-- ตารางบันทึกรายวันของเดือนนี้ -->
             <h3 class="text-sm font-semibold text-gray-700 mb-2">📋 รายการบันทึกรายวัน (เดือนนี้)</h3>
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 mb-8">
                 <table class="w-full text-left border-collapse text-xs md:text-sm">
                     <thead>
                         <tr class="bg-gray-50 text-gray-600">
@@ -105,12 +100,10 @@
             </div>
         </div>
 
-
         <!-- ========================================== -->
         <!-- TAB 2: ข้อมูลสถิติการซ่อมบำรุง -->
         <!-- ========================================== -->
         <div id="tab2" class="tab-content hidden">
-            
             <div class="bg-white p-4 rounded-xl shadow-sm mb-6 border border-gray-100">
                 <h3 class="text-sm font-semibold text-orange-600 mb-3">🔧 บันทึกการซ่อมบำรุง</h3>
                 <form id="maintenanceForm" class="space-y-3">
@@ -120,13 +113,14 @@
                             <option value="น้ำมันเครื่อง">เปลี่ยนน้ำมันเครื่อง</option>
                             <option value="ยาง">เปลี่ยนยาง / สลับยาง</option>
                             <option value="แบตเตอรี่">เปลี่ยนแบตเตอรี่</option>
+                            <option value="ช่วงล่าง">ทำช่วงล่าง</option>
                             <option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
                         </select>
                     </div>
                     
                     <div id="otherTitleDiv" class="hidden">
                         <label class="block text-xs text-gray-500 mb-1">ระบุรายการซ่อมบำรุง</label>
-                        <input type="text" id="maintTitle" placeholder="เช่น เปลี่ยนลูกปืนล้อหน้า, ซ่อมโช้ค" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2">
+                        <input type="text" id="maintTitle" placeholder="เช่น เปลี่ยนลูกปืนล้อหน้า" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -139,25 +133,27 @@
                             <input type="number" id="maintMileage" required placeholder="เช่น 260500" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2">
                         </div>
                     </div>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">หมายเหตุ / เลขที่ใบเสร็จ (ตัวเลือก)</label>
+                        <input type="text" id="maintReceipt" placeholder="เช่น ใบเสร็จบีควิกเลขที่ #1234 หรือ โน้ตเพิ่มเติม" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2">
+                    </div>
+
                     <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg text-sm px-5 py-2.5 mt-2">
-                        + บันทึกการซ่อมบำรุง
+                        + บันทึกประวัติ
                     </button>
                 </form>
             </div>
 
-            <h3 class="text-sm font-semibold text-gray-700 mb-2">ประวัติการซ่อมบำรุงทั้งหมด</h3>
-            <div id="maintenanceList" class="space-y-3">
-                <!-- ข้อมูลซ่อมบำรุงจะแสดงตรงนี้ -->
-            </div>
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">📋 ประวัติการซ่อมบำรุงทั้งหมด</h3>
+            <div id="maintenanceList" class="space-y-3 mb-8"></div>
             <div id="noMaintDataMsg" class="p-4 text-center text-gray-400 text-xs hidden">ยังไม่มีประวัติการซ่อมบำรุง</div>
         </div>
-
 
         <!-- ========================================== -->
         <!-- TAB 3: สรุปข้อมูลรวม -->
         <!-- ========================================== -->
         <div id="tab3" class="tab-content hidden">
-            
             <h3 class="text-sm font-semibold text-gray-700 mb-2">📊 ข้อมูลสรุปทั้งหมด (All-time)</h3>
             <div class="grid grid-cols-2 gap-3 mb-6">
                 <div class="bg-gray-800 p-4 rounded-xl shadow-sm text-white">
@@ -178,7 +174,6 @@
                 </div>
             </div>
 
-            <!-- สรุปรายปี -->
             <h3 class="text-sm font-semibold text-gray-700 mb-2">📈 สรุปข้อมูลรายปี</h3>
             <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6 border border-gray-100">
                 <table class="w-full text-left border-collapse text-xs md:text-sm">
@@ -187,49 +182,92 @@
                             <th class="p-3 border-b">ปี (พ.ศ.)</th>
                             <th class="p-3 border-b text-right">ระยะทาง</th>
                             <th class="p-3 border-b text-right">ค่าน้ำมัน</th>
-                            <th class="p-3 border-b text-right">กม./ลิตร</th>
+                            <th class="p-3 border-b text-right">กม./ล.</th>
                         </tr>
                     </thead>
                     <tbody id="yearlyTableBody" class="text-gray-700"></tbody>
                 </table>
             </div>
 
-            <!-- สรุปรายเดือน -->
             <h3 class="text-sm font-semibold text-gray-700 mb-2">📆 สรุปข้อมูลรายเดือน</h3>
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6 border border-gray-100">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
                 <table class="w-full text-left border-collapse text-xs md:text-sm">
                     <thead>
                         <tr class="bg-gray-50 text-gray-600">
                             <th class="p-3 border-b">เดือน</th>
                             <th class="p-3 border-b text-right">ระยะทาง</th>
                             <th class="p-3 border-b text-right">ค่าน้ำมัน</th>
-                            <th class="p-3 border-b text-right">กม./ลิตร</th>
+                            <th class="p-3 border-b text-right">กม./ล.</th>
                         </tr>
                     </thead>
                     <tbody id="monthlyTableBody" class="text-gray-700"></tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: แจ้งเตือน (ใหม่) -->
+        <!-- ========================================== -->
+        <div id="tab4" class="tab-content hidden">
+            
+            <!-- ส่วนอัปเดตเลขไมล์ปัจจุบัน -->
+            <div class="bg-gray-800 p-4 rounded-xl shadow-sm mb-6 text-white flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-gray-400 mb-1">เลขไมล์รถปัจจุบันของคุณ</p>
+                    <h2 id="displayCurrentOdo" class="text-2xl font-bold">0 <span class="text-sm font-normal">กม.</span></h2>
+                </div>
+                <button onclick="updateCurrentOdoPrompt()" class="bg-white/20 hover:bg-white/30 text-white text-xs px-3 py-2 rounded-lg backdrop-blur-sm transition">
+                    ✏️ อัปเดตไมล์
+                </button>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm mb-6 border border-gray-100">
+                <h3 class="text-sm font-semibold text-red-500 mb-3">⏰ เพิ่มการแจ้งเตือนใหม่</h3>
+                <form id="alertForm" class="space-y-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">สิ่งที่ต้องทำ (เช่น เปลี่ยนน้ำมันเครื่อง)</label>
+                        <input type="text" id="alertTitle" required placeholder="เช่น เปลี่ยนน้ำมันเครื่องรอบหน้า" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">แจ้งเตือนเมื่อเลขไมล์ถึง (กม.)</label>
+                        <input type="number" id="alertTargetOdo" required placeholder="เช่น 270000" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg p-2">
+                    </div>
+                    <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg text-sm px-5 py-2.5 mt-2">
+                        + สร้างการแจ้งเตือน
+                    </button>
+                </form>
+            </div>
+
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">🛎️ รายการแจ้งเตือนของคุณ</h3>
+            <div id="alertList" class="space-y-3 mb-8"></div>
+            <div id="noAlertDataMsg" class="p-4 text-center text-gray-400 text-xs hidden">ยังไม่มีรายการแจ้งเตือน</div>
 
         </div>
 
     </div>
 
     <!-- ========================================== -->
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar (4 แท็บ) -->
     <!-- ========================================== -->
     <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 nav-safe shadow-[0_-2px_10px_rgba(0,0,0,0.05)] z-50">
         <div class="flex justify-around items-center h-16 max-w-lg mx-auto">
             <button onclick="switchTab('tab1', this)" class="tab-btn active flex flex-col items-center justify-center w-full h-full space-y-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                <span class="text-[10px]">กรอกข้อมูล</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span class="text-[10px]">บันทึกวิ่ง</span>
             </button>
             <button onclick="switchTab('tab2', this)" class="tab-btn flex flex-col items-center justify-center w-full h-full space-y-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                 <span class="text-[10px]">ซ่อมบำรุง</span>
             </button>
             <button onclick="switchTab('tab3', this)" class="tab-btn flex flex-col items-center justify-center w-full h-full space-y-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                 <span class="text-[10px]">สรุปรวม</span>
+            </button>
+            <button onclick="switchTab('tab4', this)" class="tab-btn flex flex-col items-center justify-center w-full h-full space-y-1 relative">
+                <!-- จุดสีแดงแจ้งเตือนเล็กๆ (ถ้ามีแจ้งเตือน) -->
+                <div id="alertBadge" class="absolute top-2 right-[25%] w-2 h-2 bg-red-500 rounded-full hidden"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span class="text-[10px]">แจ้งเตือน</span>
             </button>
         </div>
     </nav>
@@ -241,10 +279,9 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.remove('hidden');
             btnElement.classList.add('active');
-            window.scrollTo(0, 0); // เลื่อนขึ้นบนสุดเมื่อเปลี่ยนแท็บ
+            window.scrollTo(0, 0); 
         }
 
-        // --- 2. การตั้งค่าข้อมูลและการคำนวณเชื้อเพลิง ---
         const defaultE20Price = 35.00;
         const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
         const baseData = [
@@ -264,14 +301,14 @@
 
         document.getElementById('dateInput').valueAsDate = new Date();
         document.getElementById('maintDate').valueAsDate = new Date();
-        
         const lastSavedPrice = localStorage.getItem('lastE20Price');
         if(lastSavedPrice) document.getElementById('pricePerLiterInput').value = lastSavedPrice;
 
+        // --- ระบบบันทึกวิ่ง (Tab 1 & 3) ---
         function loadAndRenderFuelData() {
             let savedData = JSON.parse(localStorage.getItem('mazdaDailyData')) || [];
-            let aggregated = {}; // สำหรับรายเดือน
-            let yearlyAggregated = {}; // สำหรับรายปี
+            let aggregated = {};
+            let yearlyAggregated = {};
             let totalAllDist = 0;
             let totalAllCost = 0;
             let totalAllLiters = 0;
@@ -280,19 +317,16 @@
             const currentYear = now.getFullYear();
             const currentMonth = now.getMonth();
 
-            // นำข้อมูลเก่ามาใส่ก้อนรวม
             baseData.forEach(d => {
                 let liters = d.cost / defaultE20Price;
                 aggregated[d.id] = { month: d.month, distance: d.distance, cost: d.cost, liters: liters };
-                
-                let yYear = d.id.split('-')[0]; // ดึงปี 2025, 2026
+                let yYear = d.id.split('-')[0];
                 if (!yearlyAggregated[yYear]) yearlyAggregated[yYear] = { distance: 0, cost: 0, liters: 0 };
                 yearlyAggregated[yYear].distance += d.distance;
                 yearlyAggregated[yYear].cost += d.cost;
                 yearlyAggregated[yYear].liters += liters;
             });
 
-            // นำข้อมูลที่จดเพิ่มมาบวกสะสม
             savedData.forEach(d => {
                 let dateObj = new Date(d.date);
                 let year = dateObj.getFullYear();
@@ -307,20 +341,17 @@
                 let priceL = parseFloat(d.pricePerLiter || defaultE20Price);
                 let liters = cost > 0 ? (cost / priceL) : 0;
 
-                // รวมรายเดือน
                 if (!aggregated[id]) aggregated[id] = { month: monthStr, distance: 0, cost: 0, liters: 0 };
                 aggregated[id].distance += dist;
                 aggregated[id].cost += cost;
                 aggregated[id].liters += liters;
 
-                // รวมรายปี
                 if (!yearlyAggregated[year]) yearlyAggregated[year] = { distance: 0, cost: 0, liters: 0 };
                 yearlyAggregated[year].distance += dist;
                 yearlyAggregated[year].cost += cost;
                 yearlyAggregated[year].liters += liters;
             });
 
-            // --- จัดการ UI Tab 1 (เดือนปัจจุบัน) ---
             const currentId = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
             const currentThaiYearLabel = (currentYear + 543).toString().slice(-2);
             document.getElementById('currentMonthLabel').innerText = `${thaiMonths[currentMonth]} ${currentThaiYearLabel}`;
@@ -333,7 +364,6 @@
             document.getElementById('monthAvgRate').innerText = curRate.toFixed(2);
             document.getElementById('monthAvgKmL').innerText = curKmL.toFixed(2);
 
-            // รายการประจำวันเดือนปัจจุบัน
             const dailyTbody = document.getElementById('dailyTableBody');
             dailyTbody.innerHTML = '';
             let currentMonthDaily = savedData.filter(d => new Date(d.date).getFullYear() === currentYear && new Date(d.date).getMonth() === currentMonth);
@@ -355,9 +385,6 @@
                 });
             }
 
-            // --- จัดการ UI Tab 3 (สรุป) ---
-            
-            // 3.1 สรุปตารางรายปี
             const yearlyTbody = document.getElementById('yearlyTableBody');
             yearlyTbody.innerHTML = '';
             Object.keys(yearlyAggregated).sort((a, b) => b - a).forEach(y => {
@@ -376,7 +403,6 @@
                     </tr>`;
             });
 
-            // 3.2 สรุปภาพรวมตลอดชีพ (All-time)
             document.getElementById('sumDistanceAll').innerHTML = `${totalAllDist.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} <span class="text-sm font-normal">กม.</span>`;
             document.getElementById('sumCostAll').innerHTML = `${totalAllCost.toLocaleString()} <span class="text-sm font-normal">บาท</span>`;
             let allRate = totalAllDist > 0 ? (totalAllCost / totalAllDist) : 0;
@@ -384,7 +410,6 @@
             document.getElementById('avgRateAll').innerHTML = `${allRate.toFixed(2)} <span class="text-sm font-normal text-gray-500">บ./กม.</span>`;
             document.getElementById('avgKmLAll').innerHTML = `${allKmL.toFixed(2)} <span class="text-sm font-normal text-green-600/70">กม./ล.</span>`;
 
-            // 3.3 สรุปตารางรายเดือน (จากใหม่ไปเก่า)
             const monthlyTbody = document.getElementById('monthlyTableBody');
             monthlyTbody.innerHTML = '';
             Object.keys(aggregated).sort((a, b) => b.localeCompare(a)).forEach(id => {
@@ -400,7 +425,6 @@
             });
         }
 
-        // Submit ฟอร์มเติมน้ำมัน
         document.getElementById('dailyForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const newEntry = {
@@ -421,7 +445,7 @@
         });
 
 
-        // --- 3. ระบบซ่อมบำรุง (Maintenance) ---
+        // --- ระบบซ่อมบำรุง (Tab 2) ---
         function checkMaintCategory() {
             const cat = document.getElementById('maintCategory').value;
             const otherDiv = document.getElementById('otherTitleDiv');
@@ -439,14 +463,12 @@
             let maintData = JSON.parse(localStorage.getItem('mazdaMaintData')) || [];
             const listDiv = document.getElementById('maintenanceList');
             const noDataMsg = document.getElementById('noMaintDataMsg');
-            
             listDiv.innerHTML = '';
             
             if (maintData.length === 0) {
                 noDataMsg.classList.remove('hidden');
             } else {
                 noDataMsg.classList.add('hidden');
-                // เรียงจากวันที่ล่าสุดขึ้นก่อน
                 maintData.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach((m, index) => {
                     let dObj = new Date(m.date);
                     let displayDate = `${dObj.getDate()} ${thaiMonths[dObj.getMonth()]} ${(dObj.getFullYear() + 543).toString().slice(-2)}`;
@@ -456,20 +478,24 @@
                     if(m.category === 'น้ำมันเครื่อง') icon = '🛢️';
                     if(m.category === 'ยาง') icon = '🛞';
                     if(m.category === 'แบตเตอรี่') icon = '🔋';
+                    if(m.category === 'ช่วงล่าง') icon = '⚙️';
                     if(m.category === 'อื่นๆ') { icon = '🛠️'; title = m.title; }
+
+                    let receiptHTML = m.receipt ? `<p class="text-xs text-blue-500 mt-1">📝 อ้างอิง: ${m.receipt}</p>` : '';
 
                     listDiv.innerHTML += `
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="text-2xl">${icon}</div>
+                            <div class="flex items-start space-x-3">
+                                <div class="text-2xl mt-1">${icon}</div>
                                 <div>
                                     <p class="font-semibold text-gray-800 text-sm">${title}</p>
                                     <p class="text-xs text-gray-500">${displayDate}</p>
+                                    ${receiptHTML}
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="text-xs text-gray-400">ระยะทาง (ไมล์)</p>
-                                <p class="font-bold text-orange-600 text-sm">${parseFloat(m.mileage).toLocaleString()} กม.</p>
+                                <p class="text-xs text-gray-400">เลขไมล์</p>
+                                <p class="font-bold text-orange-600 text-sm">${parseFloat(m.mileage).toLocaleString()}</p>
                             </div>
                         </div>
                     `;
@@ -477,7 +503,6 @@
             }
         }
 
-        // Submit ฟอร์มซ่อมบำรุง
         document.getElementById('maintenanceForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const newMaint = {
@@ -485,24 +510,125 @@
                 category: document.getElementById('maintCategory').value,
                 title: document.getElementById('maintTitle').value,
                 date: document.getElementById('maintDate').value,
-                mileage: parseFloat(document.getElementById('maintMileage').value)
+                mileage: parseFloat(document.getElementById('maintMileage').value),
+                receipt: document.getElementById('maintReceipt').value
             };
             
             let savedMaint = JSON.parse(localStorage.getItem('mazdaMaintData')) || [];
             savedMaint.push(newMaint);
             localStorage.setItem('mazdaMaintData', JSON.stringify(savedMaint));
 
-            // เคลียร์ค่า
             document.getElementById('maintMileage').value = '';
             document.getElementById('maintTitle').value = '';
+            document.getElementById('maintReceipt').value = '';
             
             alert('บันทึกประวัติการซ่อมบำรุงเรียบร้อยแล้ว!');
             loadAndRenderMaintenance();
         });
 
-        // โหลดข้อมูลทั้งหมดเมื่อเปิดแอป
+
+        // --- ระบบแจ้งเตือน (Tab 4) ---
+        function updateCurrentOdoPrompt() {
+            let current = localStorage.getItem('mazdaCurrentOdo') || '0';
+            let newVal = prompt('กรุณากรอกเลขไมล์รถหน้าปัดปัจจุบันของคุณ:', current);
+            if(newVal !== null && newVal !== '') {
+                localStorage.setItem('mazdaCurrentOdo', newVal);
+                loadAndRenderAlerts();
+                alert('อัปเดตเลขไมล์ปัจจุบันสำเร็จ!');
+            }
+        }
+
+        function loadAndRenderAlerts() {
+            let currentOdo = parseFloat(localStorage.getItem('mazdaCurrentOdo')) || 0;
+            document.getElementById('displayCurrentOdo').innerHTML = `${currentOdo.toLocaleString()} <span class="text-sm font-normal">กม.</span>`;
+
+            let alertsData = JSON.parse(localStorage.getItem('mazdaAlertsData')) || [];
+            const listDiv = document.getElementById('alertList');
+            const noDataMsg = document.getElementById('noAlertDataMsg');
+            const badge = document.getElementById('alertBadge');
+            
+            listDiv.innerHTML = '';
+            let hasUrgentAlert = false;
+            
+            if (alertsData.length === 0) {
+                noDataMsg.classList.remove('hidden');
+                badge.classList.add('hidden');
+            } else {
+                noDataMsg.classList.add('hidden');
+                
+                // เรียงลำดับตามระยะที่เหลือน้อยที่สุดขึ้นก่อน
+                alertsData.sort((a, b) => a.targetOdo - b.targetOdo).forEach((al, index) => {
+                    let diff = al.targetOdo - currentOdo;
+                    let statusColor = 'text-green-600';
+                    let bgColor = 'border-l-4 border-green-500';
+                    let statusText = `เหลืออีก ${diff.toLocaleString()} กม.`;
+                    
+                    if (diff <= 1000 && diff > 0) {
+                        statusColor = 'text-yellow-600';
+                        bgColor = 'border-l-4 border-yellow-500';
+                        hasUrgentAlert = true;
+                    } else if (diff <= 0) {
+                        statusColor = 'text-red-600';
+                        bgColor = 'border-l-4 border-red-500 bg-red-50';
+                        statusText = `ถึงระยะแล้ว! (เกินมา ${Math.abs(diff).toLocaleString()} กม.)`;
+                        hasUrgentAlert = true;
+                    }
+
+                    listDiv.innerHTML += `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 ${bgColor} flex justify-between items-center relative">
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm">${al.title}</p>
+                                <p class="text-xs text-gray-500 mt-1">ตั้งเตือนที่ไมล์: ${parseFloat(al.targetOdo).toLocaleString()}</p>
+                                <p class="text-sm font-semibold ${statusColor} mt-1">${statusText}</p>
+                            </div>
+                            <button onclick="deleteAlert(${al.id})" class="text-gray-300 hover:text-red-500 p-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    `;
+                });
+
+                // จุดแดงที่เมนูด้านล่าง
+                if(hasUrgentAlert) {
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+        }
+
+        document.getElementById('alertForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newAlert = {
+                id: Date.now(),
+                title: document.getElementById('alertTitle').value,
+                targetOdo: parseFloat(document.getElementById('alertTargetOdo').value)
+            };
+            
+            let alertsData = JSON.parse(localStorage.getItem('mazdaAlertsData')) || [];
+            alertsData.push(newAlert);
+            localStorage.setItem('mazdaAlertsData', JSON.stringify(alertsData));
+
+            document.getElementById('alertTitle').value = '';
+            document.getElementById('alertTargetOdo').value = '';
+            
+            alert('เพิ่มการแจ้งเตือนเรียบร้อยแล้ว!');
+            loadAndRenderAlerts();
+        });
+
+        function deleteAlert(id) {
+            if(confirm('ต้องการลบการแจ้งเตือนนี้ใช่หรือไม่?')) {
+                let alertsData = JSON.parse(localStorage.getItem('mazdaAlertsData')) || [];
+                alertsData = alertsData.filter(a => a.id !== id);
+                localStorage.setItem('mazdaAlertsData', JSON.stringify(alertsData));
+                loadAndRenderAlerts();
+            }
+        }
+
+        // โหลดข้อมูลทุกแท็บเมื่อเปิดแอป
         loadAndRenderFuelData();
         loadAndRenderMaintenance();
+        loadAndRenderAlerts();
 
     </script>
 </body>
